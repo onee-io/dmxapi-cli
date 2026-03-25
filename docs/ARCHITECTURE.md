@@ -68,7 +68,8 @@ src/
 │   ├── chat/                # 对话能力的 handler 实现
 │   │   └── openai-compat.ts # OpenAI 兼容格式（通用 fallback, priority=0）
 │   ├── image/               # 图片生成能力的 handler 实现
-│   │   └── openai-compat.ts # OpenAI 兼容格式（通用 fallback, priority=0）
+│   │   ├── openai-compat.ts # OpenAI 兼容格式（通用 fallback, priority=0）
+│   │   └── gemini.ts        # Gemini 原生格式（generateContent, priority=10）
 │   └── index.ts             # 统一注册所有 handler
 │
 ├── commands/                # CLI 命令实现
@@ -218,7 +219,10 @@ interface ExecutionContext {
 
 ### 新增 Provider（为已有能力添加新的模型提供商）
 
-**场景：** 添加 Gemini 专用的图片生成 handler（因为 Gemini 图片 API 有特殊参数）。
+**场景：** 添加 Gemini 专用的图片生成 handler。
+
+Gemini 使用 Google 原生的 `generateContent` API（而非 OpenAI 的 `/v1/images/generations`），
+需要专用 handler 处理请求/响应格式转换。
 
 **步骤：**
 
@@ -232,19 +236,28 @@ import type { ProviderRegistry } from '../registry.js';
 
 export class GeminiImageHandler implements IImageHandler {
   readonly capability = Capability.Image;
-  readonly supportedModels = ['gemini-*-image*'];
+  readonly supportedModels = ['gemini-*'];
 
   async execute(request: ImageRequest, ctx: ExecutionContext): Promise<ImageResponse> {
-    // Gemini 特有的 API 调用逻辑
-    const body = { /* ... */ };
-    const data = await ctx.httpClient.request<any>('/v1/images/generations', { body });
-    return { /* ... */ };
+    // 使用 Gemini 原生的 generateContent 端点
+    const body = {
+      contents: [{ parts: [{ text: request.prompt }] }],
+      generationConfig: {
+        responseModalities: ['TEXT', 'IMAGE'],
+        // size → imageConfig.aspectRatio，quality → imageConfig.imageSize
+      },
+    };
+    const path = `/v1beta/models/${request.model}:generateContent`;
+    const data = await ctx.httpClient.request<any>(path, { body });
+
+    // 从 candidates[0].content.parts 中提取图片（inlineData）和文本
+    return { model: request.model, images: /* parsed from data */ };
   }
 }
 
 export function registerGeminiImage(registry: ProviderRegistry): void {
   // priority=10 高于 OpenAI 兼容的 priority=0
-  registry.register(Capability.Image, new GeminiImageHandler(), ['gemini-*-image*'], 10);
+  registry.register(Capability.Image, new GeminiImageHandler(), ['gemini-*'], 10);
 }
 ```
 
@@ -260,8 +273,8 @@ export function registerAllProviders(registry: ProviderRegistry): void {
 }
 ```
 
-完成。当用户运行 `dmxapi image -m gemini-2.0-flash-image "..."` 时，
-registry 会优先匹配 `GeminiImageHandler`（因为 priority=10 > 0）。
+完成。当用户运行 `dmxapi image -m gemini-2.0-flash-exp-image-generation "..."` 时，
+registry 会优先匹配 `GeminiImageHandler`（因为 `gemini-*` 在 priority=10 > 0）。
 
 ### 新增能力（添加全新的 AI 能力类型）
 

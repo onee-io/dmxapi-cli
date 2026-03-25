@@ -69,11 +69,9 @@ export function registerImageCommand(program: Command): void {
     .description('Generate images from text prompts')
     .argument('<prompt>', 'Image description')
     .option('-m, --model <model>', 'Model to use')
-    .option('--size <WxH>', 'Image size (e.g., 1024x1024)')
-    .option('--quality <quality>', 'Quality: standard | hd')
-    .option('--style <style>', 'Style: natural | vivid')
+    .option('--size <ratio>', 'Aspect ratio (e.g., 1:1, 16:9, 9:16)')
+    .option('--quality <level>', 'Resolution: 1K | 2K | 4K (default: 1K)')
     .option('-n, --count <number>', 'Number of images', parseInt)
-    .option('--negative <prompt>', 'Negative prompt')
     .option('-o, --save <dir>', 'Save images to directory')
     .option('-p, --param <key=value...>', 'Extra API parameters', (val, prev: string[]) => {
       prev.push(val);
@@ -109,10 +107,8 @@ export function registerImageCommand(program: Command): void {
         {
           model,
           prompt,
-          negativePrompt: opts.negative,
           size: opts.size,
           quality: opts.quality,
-          style: opts.style,
           n: opts.count,
           extra,
         },

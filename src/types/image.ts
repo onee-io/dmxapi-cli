@@ -3,23 +3,33 @@
  * @description 图片生成（Image）相关类型定义
  *
  * 定义了文生图的请求参数和响应结构。
- * 兼容 OpenAI Images API 格式。
+ * size 使用比例格式（如 "1:1"、"16:9"），各 provider handler 负责转换为 API 所需格式。
+ * quality 使用分辨率等级（"1K"、"2K"、"4K"）。
  */
 
 import type { BaseRequest, BaseResponse } from './capability.js';
+
+/** 图片比例可选值 */
+export type ImageAspectRatio =
+  | 'auto'
+  | '1:1'
+  | '2:3' | '3:2'
+  | '3:4' | '4:3'
+  | '4:5' | '5:4'
+  | '9:16' | '16:9'
+  | '21:9';
+
+/** 图片分辨率/质量等级 */
+export type ImageQuality = '1K' | '2K' | '4K';
 
 /** 图片生成请求参数 */
 export interface ImageRequest extends BaseRequest {
   /** 图片描述提示词 */
   prompt: string;
-  /** 反向提示词，描述不希望出现的内容（部分模型支持） */
-  negativePrompt?: string;
-  /** 图片尺寸，如 "1024x1024"、"1792x1024" */
+  /** 图片比例。可选值：auto, 1:1, 2:3, 3:2, 3:4, 4:3, 4:5, 5:4, 9:16, 16:9, 21:9 */
   size?: string;
-  /** 图片质量，如 "standard"、"hd" */
+  /** 图片分辨率/质量等级。可选值：1K（默认）、2K、4K */
   quality?: string;
-  /** 图片风格，如 "natural"、"vivid" */
-  style?: string;
   /** 生成图片数量 */
   n?: number;
 }

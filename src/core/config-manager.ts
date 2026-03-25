@@ -29,8 +29,8 @@ const DEFAULTS: ResolvedConfig = {
   apiKey: '',
   baseUrl: 'https://www.dmxapi.cn',
   defaults: {
-    chatModel: 'gpt-4o-mini',
-    imageModel: 'dall-e-3',
+    chatModel: 'gpt-5-mini',
+    imageModel: 'gemini-3.1-flash-image-preview',
     videoModel: 'sora-2',
     musicModel: 'suno',
     ttsModel: 'tts-1',

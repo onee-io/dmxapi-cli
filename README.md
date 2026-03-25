@@ -67,7 +67,7 @@ dmxapi image "sunset over mountains" -o ./output
 
 ```
 选项：
-  -m, --model <model>         模型名称（默认：gpt-4o-mini）
+  -m, --model <model>         模型名称（默认：gpt-5-mini）
   -s, --system <message>      系统消息
   -t, --temperature <number>  采样温度 0-2（越高越随机）
   --max-tokens <number>       最大生成 token 数
@@ -104,12 +104,10 @@ dmxapi --output json chat "hello" | jq '.content'
 
 ```
 选项：
-  -m, --model <model>         模型名称（默认：dall-e-3）
-  --size <WxH>                图片尺寸（如 1024x1024）
-  --quality <quality>         质量：standard | hd
-  --style <style>             风格：natural | vivid
+  -m, --model <model>         模型名称（默认：gemini-3.1-flash-image-preview）
+  --size <ratio>              图片比例（如 1:1, 16:9, 9:16）
+  --quality <level>           分辨率：1K | 2K | 4K（默认 1K）
   -n, --count <number>        生成数量
-  --negative <prompt>         反向提示词
   -o, --save <dir>            保存图片到目录
   -p, --param <key=value>     额外 API 参数（可重复使用）
 ```
@@ -117,14 +115,20 @@ dmxapi --output json chat "hello" | jq '.content'
 **使用示例：**
 
 ```bash
-# 基本生成
+# 基本生成（默认使用 gemini-3.1-flash-image-preview）
 dmxapi image "a futuristic city at sunset"
 
-# 指定尺寸和质量
-dmxapi image "portrait of a cat" --size 1024x1792 --quality hd --style vivid
+# 指定比例和质量
+dmxapi image "portrait of a cat" --size 9:16 --quality 2K
 
 # 生成多张并保存
 dmxapi image "abstract art" -n 4 -o ./images
+
+# 使用 Gemini 模型生图
+dmxapi image -m gemini-2.0-flash-exp-image-generation "一只在月球上骑自行车的猫"
+
+# Gemini 生图指定比例和分辨率
+dmxapi image -m gemini-2.0-flash-exp-image-generation "sunset over mountains" --size 16:9 --quality 4K -o ./output
 ```
 
 ### `dmxapi config`
@@ -185,8 +189,8 @@ dmxapi --output json models
   "apiKey": "sk-your-api-key",
   "baseUrl": "https://www.dmxapi.cn",
   "defaults": {
-    "chatModel": "gpt-4o-mini",
-    "imageModel": "dall-e-3",
+    "chatModel": "gpt-5-mini",
+    "imageModel": "gemini-3.1-flash-image-preview",
     "videoModel": "sora-2",
     "musicModel": "suno",
     "ttsModel": "tts-1",
@@ -236,15 +240,25 @@ dmxapi --output json models
 2. 在 `src/providers/index.ts` 中注册
 
 ```typescript
-// src/providers/image/gemini.ts
+// src/providers/image/gemini.ts — 已实现
+// Gemini 使用 generateContent API，与 OpenAI 格式不同
 export class GeminiImageHandler implements IImageHandler {
   readonly capability = Capability.Image;
   readonly supportedModels = ['gemini-*'];
-  // ...实现 execute 方法
+
+  async execute(request: ImageRequest, ctx: ExecutionContext): Promise<ImageResponse> {
+    const path = `/v1beta/models/${request.model}:generateContent`;
+    const body = {
+      contents: [{ parts: [{ text: request.prompt }] }],
+      generationConfig: { responseModalities: ['TEXT', 'IMAGE'] },
+    };
+    const data = await ctx.httpClient.request<any>(path, { body });
+    // 从 candidates[0].content.parts 提取 inlineData (base64 图片)
+    return { model: request.model, images: /* ... */ };
+  }
 }
 
 export function registerGeminiImage(registry: ProviderRegistry): void {
-  // priority=10 高于 OpenAI 兼容 handler 的 priority=0
   registry.register(Capability.Image, new GeminiImageHandler(), ['gemini-*'], 10);
 }
 ```

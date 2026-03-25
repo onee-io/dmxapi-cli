@@ -12,6 +12,7 @@
 import type { ProviderRegistry } from './registry.js';
 import { registerOpenAICompatChat } from './chat/openai-compat.js';
 import { registerOpenAICompatImage } from './image/openai-compat.js';
+import { registerGeminiImage } from './image/gemini.js';
 
 /** 注册所有 provider handler 到 registry */
 export function registerAllProviders(registry: ProviderRegistry): void {
@@ -20,9 +21,9 @@ export function registerAllProviders(registry: ProviderRegistry): void {
 
   // --- Image ---
   registerOpenAICompatImage(registry);
+  registerGeminiImage(registry);
 
   // 后续扩展在此添加，例如：
-  // registerGeminiImage(registry);    // image/gemini.ts
   // registerSoraVideo(registry);      // video/sora.ts
   // registerSunoMusic(registry);      // music/suno.ts
 }
