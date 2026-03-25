@@ -25,17 +25,16 @@ export class OutputFormatter {
     }
   }
 
-  /** 输出图片生成响应（text 模式显示 URL，json 模式输出完整结构） */
+  /** 输出图片生成响应（text 模式仅显示修正后的提示词，json 模式输出完整结构） */
   printImages(response: ImageResponse): void {
     if (this.format === 'json') {
       this.printJson(response);
     } else {
       response.images.forEach((img: ImageResult, i: number) => {
-        if (response.images.length > 1) {
-          console.log(chalk.bold(`Image ${i + 1}:`));
-        }
-        if (img.url) console.log(img.url);
         if (img.revisedPrompt) {
+          if (response.images.length > 1) {
+            console.log(chalk.bold(`Image ${i + 1}:`));
+          }
           console.log(chalk.gray(`Revised prompt: ${img.revisedPrompt}`));
         }
       });

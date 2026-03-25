@@ -69,7 +69,8 @@ src/
 │   │   └── openai-compat.ts # OpenAI 兼容格式（通用 fallback, priority=0）
 │   ├── image/               # 图片生成能力的 handler 实现
 │   │   ├── openai-compat.ts # OpenAI 兼容格式（通用 fallback, priority=0）
-│   │   └── gemini.ts        # Gemini 原生格式（generateContent, priority=10）
+│   │   ├── gemini.ts        # Gemini 原生格式（generateContent, priority=10）
+│   │   └── seedream.ts      # Seedream 即梦格式（/v1/responses, priority=10）
 │   └── index.ts             # 统一注册所有 handler
 │
 ├── commands/                # CLI 命令实现

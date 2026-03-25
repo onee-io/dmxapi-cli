@@ -136,6 +136,9 @@ dmxapi image "把背景改成星空" --image ./photo.png -o ./output
 
 # 图片编辑：指定模型
 dmxapi image -m dall-e-2 "add a hat to the person" --image ./portrait.png -o ./output
+
+# 使用 Seedream（豆包即梦）生图
+dmxapi image -m doubao-seedream-5.0-lite "一只在月球上骑自行车的猫" -o ./output
 ```
 
 ### `dmxapi config`
