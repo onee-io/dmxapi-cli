@@ -1,8 +1,18 @@
-# dmxapi-cli
+<div align="center">
 
-DMXAPI 统一命令行工具 —— 一个 Key 调用全球 300+ AI 模型。
+<img src="docs/assets/dmxapi_logo.jpeg" alt="DMXAPI" width="200">
+
+### DMXAPI CLI 统一命令行工具 —— 一个 Key 调用全球 500+ AI 模型。
 
 [DMXAPI](https://www.dmxapi.cn/) 是大模型 API 聚合平台，支持 OpenAI、Claude、Gemini、千问等主流模型。`dmxapi-cli` 对文生文、文生图、文生视频、文生音乐等能力做统一的 CLI 封装，屏蔽底层提供商差异，方便开发者和智能体调用。
+
+</div>
+
+## ❤️赞助商
+
+感谢 DMXAPI（大模型API）赞助了本项目！ DMXAPI，一个 Key 用全球大模型。
+
+为 200 多家企业用户提供全球大模型 API 服务。· 充值即开票 · 当天开票 · 并发不限制 · 1元起充 · 7x24 在线技术辅导，GPT/Claude/Gemini 全部 6.8 折，国内模型 5~8 折，Claude Code 专属模型 3.4 折进行中！<a href="https://www.dmxapi.cn/register?aff=MATS">点击这里注册</a></td>
 
 ## 功能特性
 
@@ -41,7 +51,7 @@ npm install -g dmxapi-cli
 
 ### 1. 配置 API Key
 
-从 [DMXAPI 控制台](https://www.dmxapi.cn/) 获取 API Key，然后：
+从 [DMXAPI 控制台](https://www.dmxapi.cn/token) 获取 API Key，然后：
 
 ```bash
 # 方式一：写入配置文件（推荐）
