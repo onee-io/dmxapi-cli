@@ -25,8 +25,9 @@ DMXAPI 统一命令行工具 —— 一个 Key 调用全球 300+ AI 模型。
 
 通过 [🦞 OpenClaw](https://openclaw.ai/) 安装技能：
 
-- 告诉你的 🦞 —— `帮我安装 dmxapi-image-generation 技能`
-- 或执行命令 —— `clawhub install dmxapi-image-generation`
+```bash
+clawhub install dmxapi-image-generation
+```
 
 ## 安装
 
