@@ -6,8 +6,8 @@
  * 主要用于图片/音视频等生成结果的本地保存。
  */
 
-import { writeFileSync, mkdirSync, existsSync } from 'node:fs';
-import { dirname } from 'node:path';
+import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'node:fs';
+import { dirname, extname } from 'node:path';
 
 /**
  * 从 URL 下载文件并保存到本地
@@ -54,6 +54,30 @@ export function generateFilename(prefix: string, ext: string, index?: number): s
   const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
   const suffix = index != null ? `-${index + 1}` : '';
   return `${prefix}-${timestamp}${suffix}.${ext}`;
+}
+
+/** 扩展名 → MIME 类型映射 */
+const EXT_TO_MIME: Record<string, string> = {
+  '.png': 'image/png',
+  '.jpg': 'image/jpeg',
+  '.jpeg': 'image/jpeg',
+  '.webp': 'image/webp',
+  '.gif': 'image/gif',
+};
+
+/**
+ * 读取图片文件并转为 base64 编码
+ * @param filePath 图片文件路径
+ * @returns base64 数据和 MIME 类型
+ */
+export function readImageAsBase64(filePath: string): { data: string; mimeType: string } {
+  const ext = extname(filePath).toLowerCase();
+  const mimeType = EXT_TO_MIME[ext];
+  if (!mimeType) {
+    throw new Error(`Unsupported image format: ${ext} (supported: ${Object.keys(EXT_TO_MIME).join(', ')})`);
+  }
+  const buffer = readFileSync(filePath);
+  return { data: buffer.toString('base64'), mimeType };
 }
 
 /** 确保目录存在，不存在则递归创建 */

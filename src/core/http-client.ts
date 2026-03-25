@@ -56,9 +56,11 @@ export class HttpClient {
     const timeout = options.timeout ?? this.opts.timeout;
 
     const url = `${this.opts.baseUrl}${path}`;
+    // FormData 自带 Content-Type（含 boundary），不能手动设置
+    const isFormData = typeof FormData !== 'undefined' && body instanceof FormData;
     const requestHeaders: Record<string, string> = {
-      'Content-Type': 'application/json',
       Authorization: `Bearer ${this.opts.apiKey}`,
+      ...(!isFormData ? { 'Content-Type': 'application/json' } : {}),
       ...headers,
     };
 
@@ -86,7 +88,7 @@ export class HttpClient {
         const response = await fetch(url, {
           method,
           headers: requestHeaders,
-          body: body ? JSON.stringify(body) : undefined,
+          body: isFormData ? (body as FormData) : body ? JSON.stringify(body) : undefined,
           signal: controller.signal,
         });
 

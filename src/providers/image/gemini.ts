@@ -53,7 +53,9 @@ export class GeminiImageHandler implements IImageHandler {
     const allImages: ImageResult[] = [];
 
     for (let i = 0; i < count; i++) {
-      ctx.logger.info(`Generating image ${i + 1}/${count} with ${request.model}...`);
+      if (count > 1) {
+        ctx.logger.debug(`Generating image ${i + 1}/${count}`);
+      }
 
       const body = this.buildRequestBody(request);
       const path = `/v1beta/models/${request.model}:generateContent`;
@@ -87,10 +89,19 @@ export class GeminiImageHandler implements IImageHandler {
       generationConfig.imageConfig = imageConfig;
     }
 
+    // 构建 parts：文本 prompt + 可选的输入图片
+    const parts: unknown[] = [{ text: request.prompt }];
+    if (request.image) {
+      parts.push({
+        inlineData: {
+          mimeType: request.image.mimeType,
+          data: request.image.data,
+        },
+      });
+    }
+
     const body: Record<string, unknown> = {
-      contents: [{
-        parts: [{ text: request.prompt }],
-      }],
+      contents: [{ parts }],
       generationConfig,
     };
 

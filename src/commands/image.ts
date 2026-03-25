@@ -18,7 +18,7 @@ import { logger, setLogLevel } from '../core/logger.js';
 import { OutputFormatter } from '../core/output-formatter.js';
 import { registry } from '../providers/registry.js';
 import { resolveModel } from '../utils/model-resolver.js';
-import { downloadFile, saveBase64, generateFilename, ensureDir } from '../utils/file-io.js';
+import { downloadFile, saveBase64, generateFilename, ensureDir, readImageAsBase64 } from '../utils/file-io.js';
 import type { IImageHandler } from '../interfaces/index.js';
 import type { ImageResponse } from '../types/index.js';
 
@@ -72,6 +72,7 @@ export function registerImageCommand(program: Command): void {
     .option('--size <ratio>', 'Aspect ratio (e.g., 1:1, 16:9, 9:16)')
     .option('--quality <level>', 'Resolution: 1K | 2K | 4K (default: 1K)')
     .option('-n, --count <number>', 'Number of images', parseInt)
+    .option('--image <path>', 'Input image for editing')
     .option('-o, --save <dir>', 'Save images to directory')
     .option('-p, --param <key=value...>', 'Extra API parameters', (val, prev: string[]) => {
       prev.push(val);
@@ -103,10 +104,15 @@ export function registerImageCommand(program: Command): void {
       const ctx = { httpClient, config, logger };
       const extra = opts.param?.length ? parseExtraParams(opts.param) : undefined;
 
+      // 读取输入图片（用于图片编辑）
+      const image = opts.image ? readImageAsBase64(opts.image) : undefined;
+
+      logger.info(`Generating image with ${model}...`);
       const response = await imageHandler.execute(
         {
           model,
           prompt,
+          image,
           size: opts.size,
           quality: opts.quality,
           n: opts.count,

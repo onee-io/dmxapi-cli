@@ -22,10 +22,20 @@ export type ImageAspectRatio =
 /** 图片分辨率/质量等级 */
 export type ImageQuality = '1K' | '2K' | '4K';
 
-/** 图片生成请求参数 */
+/** 输入图片数据（用于图片编辑） */
+export interface ImageInput {
+  /** base64 编码的图片数据 */
+  data: string;
+  /** MIME 类型，如 "image/png"、"image/jpeg" */
+  mimeType: string;
+}
+
+/** 图片生成/编辑请求参数 */
 export interface ImageRequest extends BaseRequest {
   /** 图片描述提示词 */
   prompt: string;
+  /** 输入图片（用于图片编辑），提供后将在已有图片上进行编辑 */
+  image?: ImageInput;
   /** 图片比例。可选值：auto, 1:1, 2:3, 3:2, 3:4, 4:3, 4:5, 5:4, 9:16, 16:9, 21:9 */
   size?: string;
   /** 图片分辨率/质量等级。可选值：1K（默认）、2K、4K */

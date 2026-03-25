@@ -18,6 +18,14 @@ const program = createProgram();
 program.parseAsync(process.argv).catch((err: unknown) => {
   if (err instanceof DmxapiError) {
     logger.error(err.message);
+    // API 错误时输出响应体中的详细信息
+    if ('responseBody' in err && err.responseBody) {
+      const body = err.responseBody;
+      const detail = typeof body === 'object' && body !== null && 'error' in body
+        ? (body as any).error?.message ?? JSON.stringify(body)
+        : String(body);
+      logger.error('Detail:', detail);
+    }
     if (err instanceof AuthenticationError) {
       logger.info('Hint: run `dmxapi config init` to set up your API key.');
     }

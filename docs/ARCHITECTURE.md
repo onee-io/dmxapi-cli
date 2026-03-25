@@ -45,7 +45,7 @@ src/
 ├── types/                   # TypeScript 类型定义
 │   ├── capability.ts        # Capability 枚举 + BaseRequest/BaseResponse
 │   ├── chat.ts              # 对话相关类型
-│   ├── image.ts             # 图片生成相关类型
+│   ├── image.ts             # 图片生成/编辑相关类型
 │   ├── video.ts             # 视频生成相关类型（预留）
 │   ├── music.ts             # 音乐生成相关类型（预留）
 │   ├── tts.ts               # 语音合成相关类型（预留）
@@ -89,7 +89,7 @@ src/
 │
 └── utils/                   # 工具函数
     ├── model-resolver.ts    # 模型名称解析（默认值 + 别名 + registry）
-    └── file-io.ts           # 文件下载/保存
+    └── file-io.ts           # 文件下载/保存/图片读取
 ```
 
 ## 核心设计模式
@@ -191,7 +191,7 @@ interface ExecutionContext {
 
 ## 数据流
 
-以 `dmxapi chat -m gpt-4o-mini "hello"` 为例：
+以 `dmxapi chat -m gpt-5-mini "hello"` 为例：
 
 ```
 1. [index.ts]    程序入口，解析命令行参数
@@ -204,7 +204,7 @@ interface ExecutionContext {
         ↓
 5. [model-resolver.ts]  resolveModel() 解析模型
         ↓
-6. [registry.ts]  registry.resolve(Chat, "gpt-4o-mini")
+6. [registry.ts]  registry.resolve(Chat, "gpt-5-mini")
                    → 返回 OpenAICompatChatHandler
         ↓
 7. [chat/openai-compat.ts]  chatHandler.stream(request, ctx)
