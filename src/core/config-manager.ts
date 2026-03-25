@@ -37,8 +37,8 @@ const DEFAULTS: ResolvedConfig = {
     ttsVoice: 'alloy',
   },
   http: {
-    timeout: 180000,  // 180 秒，图片生成等操作耗时较长
-    retries: 2,
+    timeout: 300000,  // 5 分钟，图片生成等操作耗时较长
+    retries: 1,
   },
   output: {
     format: 'text',

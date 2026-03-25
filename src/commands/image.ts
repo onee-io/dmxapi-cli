@@ -73,6 +73,7 @@ export function registerImageCommand(program: Command): void {
     .option('--quality <level>', 'Resolution: 1K | 2K | 4K (default: 1K)')
     .option('-n, --count <number>', 'Number of images', parseInt)
     .option('--image <path>', 'Input image for editing')
+    .option('--web-search', 'Enable web search for image generation')
     .option('-o, --save <dir>', 'Save images to directory')
     .option('-p, --param <key=value...>', 'Extra API parameters', (val, prev: string[]) => {
       prev.push(val);
@@ -116,6 +117,7 @@ export function registerImageCommand(program: Command): void {
           size: opts.size,
           quality: opts.quality,
           n: opts.count,
+          webSearch: opts.webSearch,
           extra,
         },
         ctx,

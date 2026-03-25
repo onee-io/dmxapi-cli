@@ -112,6 +112,11 @@ export class SeedreamImageHandler implements IImageHandler {
       watermark: false,
     };
 
+    // 联网搜索（仅 5.0-lite 支持）
+    if (request.webSearch) {
+      body.tools = [{ type: 'web_search' }];
+    }
+
     // 输入图片（图片编辑），转为 data URI 格式
     if (request.image) {
       body.image = `data:${request.image.mimeType};base64,${request.image.data}`;

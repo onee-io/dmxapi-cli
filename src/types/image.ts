@@ -42,6 +42,8 @@ export interface ImageRequest extends BaseRequest {
   quality?: string;
   /** 生成图片数量 */
   n?: number;
+  /** 是否启用联网搜索增强（部分模型支持，如 Gemini、Seedream） */
+  webSearch?: boolean;
 }
 
 /** 图片生成响应 */

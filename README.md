@@ -100,7 +100,7 @@ dmxapi --output json chat "hello" | jq '.content'
 
 ### `dmxapi image <prompt>`
 
-图片生成（文生图）。
+图片生成/编辑（文生图、图片编辑）。
 
 ```
 选项：
@@ -109,6 +109,7 @@ dmxapi --output json chat "hello" | jq '.content'
   --quality <level>           分辨率：1K | 2K | 4K（默认 1K）
   -n, --count <number>        生成数量
   --image <path>              输入图片（用于图片编辑）
+  --web-search                启用联网搜索增强（Gemini/Seedream）
   -o, --save <dir>            保存图片到目录
   -p, --param <key=value>     额外 API 参数（可重复使用）
 ```
@@ -207,8 +208,8 @@ dmxapi --output json models
     "ttsVoice": "alloy"
   },
   "http": {
-    "timeout": 30000,
-    "retries": 2
+    "timeout": 300000,
+    "retries": 1
   },
   "output": {
     "format": "text",

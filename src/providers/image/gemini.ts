@@ -105,6 +105,11 @@ export class GeminiImageHandler implements IImageHandler {
       generationConfig,
     };
 
+    // 联网搜索
+    if (request.webSearch) {
+      body.tools = [{ googleSearch: {} }];
+    }
+
     // 透传 extra 参数到 generationConfig
     if (request.extra) {
       Object.assign(generationConfig, request.extra);
