@@ -2,7 +2,7 @@
 
 DMXAPI 统一命令行工具 —— 一个 Key 调用全球 300+ AI 模型。
 
-[DMXAPI](https://dmxapi.com/) 是大模型 API 聚合平台，支持 OpenAI、Claude、Gemini、千问等主流模型。`dmxapi-cli` 对文生文、文生图、文生视频、文生音乐等能力做统一的 CLI 封装，屏蔽底层提供商差异，方便开发者和智能体调用。
+[DMXAPI](https://www.dmxapi.cn/) 是大模型 API 聚合平台，支持 OpenAI、Claude、Gemini、千问等主流模型。`dmxapi-cli` 对文生文、文生图、文生视频、文生音乐等能力做统一的 CLI 封装，屏蔽底层提供商差异，方便开发者和智能体调用。
 
 ## 功能特性
 
@@ -14,6 +14,19 @@ DMXAPI 统一命令行工具 —— 一个 Key 调用全球 300+ AI 模型。
 - **智能体友好** —— 支持 JSON 输出、管道输入、详细的参数说明
 
 > **规划中**：文生视频 (`video`)、文生音乐 (`music`)、语音合成 (`tts`)
+
+## Agent Skills
+
+项目内置了符合 [Agent Skills](https://agentskills.io/) 标准的技能定义，可供 AI Agent 直接调用。
+
+| 技能 | 说明 |
+|------|------|
+| [`dmxapi-image-generation`](skills/dmxapi-image-generation/SKILL.md) | 图片生成/编辑（文生图、图片编辑、联网搜索增强） |
+
+通过 [🦞 OpenClaw](https://openclaw.ai/) 安装技能：
+
+- 告诉你的 🦞 —— `帮我安装 dmxapi-image-generation 技能`
+- 或执行命令 —— `clawhub install dmxapi-image-generation`
 
 ## 安装
 
@@ -27,7 +40,7 @@ npm install -g dmxapi-cli
 
 ### 1. 配置 API Key
 
-从 [DMXAPI 控制台](https://dmxapi.com/) 获取 API Key，然后：
+从 [DMXAPI 控制台](https://www.dmxapi.cn/) 获取 API Key，然后：
 
 ```bash
 # 方式一：写入配置文件（推荐）
@@ -52,11 +65,8 @@ dmxapi chat -m claude-sonnet-4-20250514 "什么是量子计算？"
 # 带 system 消息
 dmxapi chat -s "你是一个翻译助手" "Translate to English: 今天天气真好"
 
-# 图片生成
-dmxapi image "一只在月球上骑自行车的猫" --size 1:1
-
-# 生成图片并保存到本地
-dmxapi image "sunset over mountains" -o ./output
+# 图片生成并保存到本地
+dmxapi image "一只在月球上骑自行车的猫" -o ./output
 ```
 
 ## 命令详解
@@ -117,29 +127,17 @@ dmxapi --output json chat "hello" | jq '.content'
 **使用示例：**
 
 ```bash
-# 基本生成（默认使用 gemini-3.1-flash-image-preview）
-dmxapi image "a futuristic city at sunset"
+# 基本生成
+dmxapi image "日落时分的未来城市" -o ./output
 
 # 指定比例和质量
-dmxapi image "portrait of a cat" --size 9:16 --quality 2K
-
-# 生成多张并保存
-dmxapi image "abstract art" -n 4 -o ./images
-
-# 使用 Gemini 模型生图
-dmxapi image -m gemini-2.0-flash-exp-image-generation "一只在月球上骑自行车的猫"
-
-# Gemini 生图指定比例和分辨率
-dmxapi image -m gemini-2.0-flash-exp-image-generation "sunset over mountains" --size 16:9 --quality 4K -o ./output
+dmxapi image "一只猫的肖像画" --size 9:16 --quality 2K -o ./output
 
 # 图片编辑：在已有图片上修改
 dmxapi image "把背景改成星空" --image ./photo.png -o ./output
 
-# 图片编辑：指定模型
-dmxapi image -m dall-e-2 "add a hat to the person" --image ./portrait.png -o ./output
-
-# 使用 Seedream（豆包即梦）生图
-dmxapi image -m doubao-seedream-5.0-lite "一只在月球上骑自行车的猫" -o ./output
+# 联网搜索增强
+dmxapi image "最新款 iPhone 产品图" --web-search -o ./output
 ```
 
 ### `dmxapi config`

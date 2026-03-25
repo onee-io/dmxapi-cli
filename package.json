@@ -1,6 +1,6 @@
 {
   "name": "dmxapi-cli",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Unified CLI for DMXAPI - AI model API aggregation platform",
   "type": "module",
   "bin": {
