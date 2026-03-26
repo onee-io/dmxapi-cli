@@ -37,7 +37,8 @@ export class OpenAICompatImageHandler implements IImageHandler {
   /** 执行图片生成或编辑请求 */
   async execute(request: ImageRequest, ctx: ExecutionContext): Promise<ImageResponse> {
     // 有输入图片时走编辑端点（multipart/form-data）
-    if (request.image) {
+    const inputImages = request.images ?? [];
+    if (inputImages.length > 0) {
       return this.executeEdit(request, ctx);
     }
     return this.executeGenerate(request, ctx);
@@ -67,10 +68,12 @@ export class OpenAICompatImageHandler implements IImageHandler {
     formData.append('model', request.model);
     formData.append('prompt', request.prompt);
 
-    // base64 → Buffer → File
-    const imageBuffer = Buffer.from(request.image!.data, 'base64');
-    const ext = request.image!.mimeType.split('/')[1] ?? 'png';
-    formData.append('image', new File([imageBuffer], `image.${ext}`, { type: request.image!.mimeType }));
+    // 多张图片：每个都用 image 字段名
+    for (const img of request.images ?? []) {
+      const imageBuffer = Buffer.from(img.data, 'base64');
+      const ext = img.mimeType.split('/')[1] ?? 'png';
+      formData.append('image', new File([imageBuffer], `image.${ext}`, { type: img.mimeType }));
+    }
 
     if (request.size && request.size !== 'auto') {
       formData.append('size', ASPECT_RATIO_TO_SIZE[request.size] ?? request.size);

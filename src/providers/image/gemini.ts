@@ -89,13 +89,13 @@ export class GeminiImageHandler implements IImageHandler {
       generationConfig.imageConfig = imageConfig;
     }
 
-    // 构建 parts：文本 prompt + 可选的输入图片
+    // 构建 parts：文本 prompt + 多张输入图片
     const parts: unknown[] = [{ text: request.prompt }];
-    if (request.image) {
+    for (const img of request.images ?? []) {
       parts.push({
         inlineData: {
-          mimeType: request.image.mimeType,
-          data: request.image.data,
+          mimeType: img.mimeType,
+          data: img.data,
         },
       });
     }
@@ -105,9 +105,9 @@ export class GeminiImageHandler implements IImageHandler {
       generationConfig,
     };
 
-    // 联网搜索
+    // 联网搜索（支持 Web 搜索和图片搜索）
     if (request.webSearch) {
-      body.tools = [{ googleSearch: {} }];
+      body.tools = [{ google_search: { search_types: { web_search: {}, image_search: {} } } }];
     }
 
     // 透传 extra 参数到 generationConfig

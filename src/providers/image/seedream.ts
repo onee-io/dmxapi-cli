@@ -117,9 +117,12 @@ export class SeedreamImageHandler implements IImageHandler {
       body.tools = [{ type: 'web_search' }];
     }
 
-    // 输入图片（图片编辑），转为 data URI 格式
-    if (request.image) {
-      body.image = `data:${request.image.mimeType};base64,${request.image.data}`;
+    // 输入图片（图片编辑/多图融合），转为 data URI 数组
+    const inputImages = request.images ?? [];
+    if (inputImages.length > 0) {
+      body.image = inputImages.map(img =>
+        `data:${img.mimeType};base64,${img.data}`
+      );
     }
 
     // 透传 extra 参数到请求体顶层

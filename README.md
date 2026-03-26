@@ -17,7 +17,7 @@
 ## 功能特性
 
 - **文本对话** (`chat`) —— 支持流式输出、system 消息、图片附件（视觉模型）
-- **图片生成/编辑** (`image`) —— 支持比例/分辨率配置、图片编辑、自动下载保存
+- **图片生成/编辑** (`image`) —— 支持比例/分辨率配置、图片编辑、多图融合、自动下载保存
 - **配置管理** (`config`) —— 多级配置优先级（CLI > 环境变量 > 配置文件 > 默认值）
 - **模型查询** (`models`) —— 列出所有可用模型和提供商
 - **易扩展** —— 新增提供商只需 2 步，新增能力只需 5 步
@@ -31,7 +31,7 @@
 
 | 技能 | 说明 |
 |------|------|
-| [`dmxapi-image-generation`](skills/dmxapi-image-generation/SKILL.md) | 图片生成/编辑（文生图、图片编辑、联网搜索增强） |
+| [`dmxapi-image-generation`](skills/dmxapi-image-generation/SKILL.md) | 图片生成/编辑（文生图、图片编辑、多图融合、联网搜索增强） |
 
 通过 [🦞 OpenClaw](https://openclaw.ai/) 安装技能：
 
@@ -121,7 +121,7 @@ dmxapi --output json chat "hello" | jq '.content'
 
 ### `dmxapi image <prompt>`
 
-图片生成/编辑（文生图、图片编辑）。
+图片生成/编辑（文生图、图片编辑、多图融合）。
 
 ```
 选项：
@@ -129,7 +129,7 @@ dmxapi --output json chat "hello" | jq '.content'
   --size <ratio>              图片比例（如 1:1, 16:9, 9:16）
   --quality <level>           分辨率：1K | 2K | 4K（默认 1K）
   -n, --count <number>        生成数量
-  --image <path>              输入图片（用于图片编辑）
+  --image <path>              输入图片（可重复多次实现多图融合）
   --web-search                启用联网搜索增强（Gemini/Seedream）
   -o, --save <dir>            保存图片到目录
   -p, --param <key=value>     额外 API 参数（可重复使用）
@@ -146,6 +146,9 @@ dmxapi image "一只猫的肖像画" --size 9:16 --quality 2K -o ./output
 
 # 图片编辑：在已有图片上修改
 dmxapi image "把背景改成星空" --image ./photo.png -o ./output
+
+# 多图融合
+dmxapi image "将这两张图片融合成一幅画" --image ./a.png --image ./b.png -o ./output
 
 # 联网搜索增强
 dmxapi image "最新款 iPhone 产品图" --web-search -o ./output
