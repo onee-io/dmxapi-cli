@@ -26,6 +26,7 @@ import { OutputFormatter } from '../core/output-formatter.js';
 import { StreamRenderer } from '../core/stream-renderer.js';
 import { registry } from '../providers/registry.js';
 import { resolveModel } from '../utils/model-resolver.js';
+import { readImageAsBase64 } from '../utils/file-io.js';
 import type { IChatHandler } from '../interfaces/index.js';
 
 /**
@@ -72,7 +73,7 @@ export function registerChatCommand(program: Command): void {
     .option('--stream', 'Enable streaming output (default for TTY)')
     .option('--no-stream', 'Disable streaming')
     .option('-f, --file <path>', 'Read prompt from file')
-    .option('--image <url>', 'Attach image URL for vision models')
+    .option('--image <path>', 'Attach image (local file path or URL) for vision models')
     .option('-p, --param <key=value...>', 'Extra API parameters', (val, prev: string[]) => {
       prev.push(val);
       return prev;
@@ -111,9 +112,15 @@ export function registerChatCommand(program: Command): void {
 
       // 如果附带了图片，构造多模态消息（用于视觉模型）
       if (opts.image) {
+        let imageUrl = opts.image;
+        // 本地文件路径转换为 base64 data URL
+        if (!opts.image.startsWith('http://') && !opts.image.startsWith('https://')) {
+          const { data, mimeType } = readImageAsBase64(opts.image);
+          imageUrl = `data:${mimeType};base64,${data}`;
+        }
         const content: ChatContentPart[] = [
           { type: 'text', text: prompt },
-          { type: 'image_url', image_url: { url: opts.image } },
+          { type: 'image_url', image_url: { url: imageUrl } },
         ];
         messages.push({ role: 'user', content });
       } else {

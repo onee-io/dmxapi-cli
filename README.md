@@ -96,7 +96,7 @@ dmxapi image "一只在月球上骑自行车的猫" -o ./output
   --stream                    启用流式输出（终端默认开启）
   --no-stream                 禁用流式输出
   -f, --file <path>           从文件读取 prompt
-  --image <url>               附加图片 URL（视觉模型）
+  --image <path>              附加图片（本地路径或 URL，视觉模型）
   -p, --param <key=value>     额外 API 参数（可重复使用）
 ```
 
@@ -110,7 +110,7 @@ dmxapi chat -f prompt.txt
 echo "解释这段代码" | dmxapi chat
 
 # 图片理解（视觉模型）
-dmxapi chat -m gpt-4o "描述这张图片的内容" --image https://example.com/photo.jpg
+dmxapi chat -m gpt-5-mini "描述这张图片的内容" --image ./photo.jpg
 
 # 传递额外参数
 dmxapi chat "hello" -p presence_penalty=0.5 -p frequency_penalty=0.3
