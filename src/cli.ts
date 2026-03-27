@@ -7,9 +7,17 @@
  */
 
 import { Command } from 'commander';
+import { readFileSync } from 'fs';
+import { fileURLToPath } from 'url';
+import { dirname, join } from 'path';
 import { registerCommands } from './commands/index.js';
 import { registry } from './providers/registry.js';
 import { registerAllProviders } from './providers/index.js';
+
+// 动态读取 package.json 版本号
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+const packageJson = JSON.parse(readFileSync(join(__dirname, '../package.json'), 'utf-8'));
 
 /** 创建并返回配置完成的 CLI 程序实例 */
 export function createProgram(): Command {
@@ -18,7 +26,7 @@ export function createProgram(): Command {
   program
     .name('dmxapi')
     .description('Unified CLI for DMXAPI - AI model API aggregation platform')
-    .version('0.1.0')
+    .version(packageJson.version)
     .option('--api-key <key>', 'API key (overrides env/config)')
     .option('--base-url <url>', 'Base URL (overrides env/config)')
     .option('--output <format>', 'Output format: text | json', 'text')
