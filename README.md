@@ -32,11 +32,13 @@
 | 技能 | 说明 |
 |------|------|
 | [`dmxapi-image-generation`](skills/dmxapi-image-generation/SKILL.md) | 图片生成/编辑（文生图、图片编辑、多图融合、联网搜索增强） |
+| [`dmxapi-image-recognition`](skills/dmxapi-image-recognition/SKILL.md) | 图像识别/理解（图片描述、OCR文字识别、图表分析、物体检测） |
 
 通过 [🦞 OpenClaw](https://openclaw.ai/) 安装技能：
 
 ```bash
 clawhub install dmxapi-image-generation
+clawhub install dmxapi-image-recognition
 ```
 
 ## 安装
